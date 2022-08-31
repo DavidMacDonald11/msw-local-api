@@ -1,0 +1,15 @@
+{
+  "name": "msw-local",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Minecraft Server Website Local",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "David MacDonald",
+  "license": "ISC",
+  "dependencies": {
+    "rcon": "^1.1.0"
+  }
+}
