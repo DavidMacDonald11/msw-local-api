@@ -8,7 +8,7 @@ class State {
         totalMinutes: 15,
         clock: 0,
         monitor: null,
-        stop: false
+        paused: false
     }
 
     static read() {
@@ -20,8 +20,8 @@ class State {
     }
 
     static write(state = null) {
-        state = state || this.default
-        fs.writeFileSync(this.file, JSON.stringify(this.state, null, "  ") + "\n")
+        state = state || this.state
+        fs.writeFileSync(this.file, JSON.stringify(state, null, "  ") + "\n")
     }
 }
 

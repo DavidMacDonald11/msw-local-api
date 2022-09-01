@@ -5,7 +5,7 @@ function exec(command) {
     if(!commandIsString) { command = scriptToCommand(command)}
 
     try {
-        return {result: execSync(command, {shell: "/bin/bash"}).toString()}
+        return {result: execSync(command, {shell: "/bin/bash"}).toString().trim()}
     } catch(error) {
         return {error, result: "Error"}
     }

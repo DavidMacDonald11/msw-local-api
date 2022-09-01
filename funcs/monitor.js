@@ -1,6 +1,7 @@
 import State from "../state.js"
-import Servers from "../servers.js"
+import Server from "../server.js"
 import exec from "../exec.js"
+import out from "../out.js"
 
 const func = process.argv[2]
 
@@ -8,34 +9,38 @@ export default () => {
     const state = State.state
 
     switch(func) {
-        case "stop":
-            state.stop = true
-            console.log("Run 'unstop' to stop stopping")
+        case "pause":
+            state.paused = true
+            out("Run 'resume' to resume shutdown clock")
             return true
-        case "unstop":
-            state.stop = false
+        case "resume":
+            state.paused = false
             return true
         case "ping":
             if(state.monitor == null) {
                 const monitor = `nohup ./res/monitor.bash ${state.totalMinutes}  &>/dev/null`
                 state.clock = 0
-                state.monitor = exec(`(${monitor}) & echo $!`).result.trim()
+                state.monitor = exec(`(${monitor}) & echo $!`).result
             }
 
-            console.log("OK")
+            out("OK")
             return true
         case "incClock":
-            if(!state.stop && !Servers.anyOn()) ++state.clock
+            if(!state.stop && !Server.anyOn()) ++state.clock
             else state.clock = 0
 
-            console.log(state.clock)
+            out(state.clock)
             return true
-        case "getStats":
-            console.log(JSON.stringify(state))
+        case "getFullState":
+            out({
+                servers: Server.getServers(),
+                state: State.state
+            })
+
             return true
         case "shutdown":
-            Servers.mustBeOff()
-            Servers.write()
+            Server.mustBeOff()
+            Server.write()
             State.write(State.default)
             exec("./res/shutdown.bash")
             process.exit(0)
