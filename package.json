@@ -8,5 +8,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "David MacDonald",
-  "license": "ISC"
+  "license": "ISC",
+  "typings": "declarations/rcon.d.ts"
 }

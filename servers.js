@@ -54,6 +54,20 @@ class Servers {
         return JSON.stringify(infos, null, "  ")
     }
 
+    static getServers() {
+        return JSON.stringify(this.servers.map(server => {
+            return {
+                id: server.info.id,
+                name: server.info.name,
+                description: server.info.description,
+                edition: server.info.edition,
+                version: server.info.version,
+                port: server.info.port,
+                isOn: server.info.isOn
+            }
+        }))
+    }
+
     static checkAll() {
         this.servers.forEach(server => { server.check() })
     }
@@ -73,7 +87,7 @@ class Servers {
         this.info.pid = exec([
             `cd "${this.info.path}"`,
             "(nohup java -jar -Xms2G -Xmx5G server.jar > logs/run.log 2>&1) & echo $!"
-        ]).trim()
+        ]).result.trim()
     }
 
     check() {
@@ -82,21 +96,25 @@ class Servers {
         const result = exec([
             `kill -s 0 ${this.info.pid}`,
             "echo $?"
-        ]).trim()
+        ]).result.trim()
 
         this.info.isOn = result == "0"
     }
 
     rcon(command) {
-        return exec(`rcon -a localhost:${this.info.rcon} -p ${this.info.rconPass} -t rcon "${command}"`)
+        const java = "java -jar ./res/minecraft-rcon-client-1.0.0.jar"
+        const args = `localhost:${this.info.rcon} ${this.info.rconPass} "${command}"`
+        return exec(`${java} ${args}`).result.split("\n")[1]
     }
 
     getStats() {
+        if(!this.info.isOn) return {playerCount: 0, minutesLeft: 0}
+
         let playerCount = this.rcon("/scoreboard players get #ItHandler it_online")
-        playerCount = +playerCount.replace("#ItHandler has", "").replace("[it_online]", "").trim()
+        playerCount = +playerCount.replace("< #ItHandler has", "").replace("[it_online]", "").trim()
 
         let clock = this.rcon("/scoreboard players get #Clock it_30mClock")
-        clock = +clock.replace("#Clock has", "").replace("[it_30mClock]", "").trim()
+        clock = +clock.replace("< #Clock has", "").replace("[it_30mClock]", "").trim()
 
         const totalMinutes = 30
         let minutesLeft = clock >= 0 ? totalMinutes - (clock / 2) : 0

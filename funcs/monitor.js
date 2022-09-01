@@ -17,8 +17,9 @@ export default () => {
             return true
         case "ping":
             if(state.monitor == null) {
+                const monitor = `nohup ./res/monitor.bash ${state.totalMinutes}  &>/dev/null`
                 state.clock = 0
-                state.monitor = exec(`(nohup ./res/monitor.bash ${state.totalMinutes}  &>/dev/null) & echo $!`)
+                state.monitor = exec(`(${monitor}) & echo $!`).result.trim()
             }
 
             console.log("OK")
@@ -30,7 +31,7 @@ export default () => {
             console.log(state.clock)
             return true
         case "getStats":
-            console.log(state)
+            console.log(JSON.stringify(state))
             return true
         case "shutdown":
             Servers.mustBeOff()

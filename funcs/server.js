@@ -13,8 +13,8 @@ export default () => {
         case "listServers":
             Servers.list()
             return true
-        case "getServersJSON":
-            console.log(Servers.toJSON())
+        case "getServers":
+            console.log(Servers.getServers())
             return true
         case "checkServers":
             Servers.checkAll()
@@ -24,7 +24,8 @@ export default () => {
             return true
         case "getServerStats":
             checkId()
-            console.log(Servers.find(id).getStats())
+            const result = Servers.find(id).getStats()
+            console.log(JSON.stringify(result))
             return true
         case "rconServer":
             checkId()

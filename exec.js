@@ -4,8 +4,11 @@ function exec(command) {
     const commandIsString = typeof command === "string" || command instanceof String
     if(!commandIsString) { command = scriptToCommand(command)}
 
-    const output = execSync(command, {shell: "/bin/bash"}).toString()
-    return output
+    try {
+        return {result: execSync(command, {shell: "/bin/bash"}).toString()}
+    } catch(error) {
+        return {error, result: "Error"}
+    }
 }
 
 function scriptToCommand(script) {
