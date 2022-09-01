@@ -10,7 +10,7 @@ function exec(command) {
 
 function scriptToCommand(script) {
     let command = ""
-    script.forEach(line => {command += `${line}\n`})
+    script.forEach(line => {command += `${line};\n`})
     return command.trimEnd()
 }
 
