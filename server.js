@@ -19,7 +19,8 @@ class Server {
         const servers = this.servers.map(server => {
             return {
                 public: server.public,
-                local: server.local
+                local: server.local,
+                state: server.state
             }
         })
 
@@ -28,13 +29,13 @@ class Server {
 
     static mustBeOff() {
         this.servers.forEach(server => {
-            server.info.isOn = false,
-            server.info.pid = undefined
+            server.state.isOn = false,
+            server.local.pid = undefined
         })
     }
 
     static anyOn() {
-        return this.servers.some(server => {return server.public.isOn})
+        return this.servers.some(server => {return server.state.isOn})
     }
 
     static find(id) {
@@ -67,17 +68,17 @@ class Server {
     constructor(server) {
         this.public = server.public
         this.local = server.local
+        this.state = server.state
 
         let rconCommand = "java -jar ./res/minecraft-rcon-client-1.0.0.jar"
         let rconArgs = `localhost:${this.local.rcon} ${this.local.rconPass}`
 
         this.rconCommand = `${rconCommand} ${rconArgs}`
-        this.state = {playerCount: 0, minutesLeft: 0}
     }
 
     start() {
-        if(this.public.isOn) return
-        this.public.isOn = true
+        if(this.state.isOn) return
+        this.state.isOn = true
 
         this.local.pid = exec([
             `cd "${this.local.path}"`,
@@ -93,7 +94,7 @@ class Server {
             "echo $?"
         ]).result
 
-        this.public.isOn = result == "0"
+        this.state.isOn = result == "0"
     }
 
     rcon(command) {
@@ -102,7 +103,7 @@ class Server {
 
     checkState() {
         this.checkOn()
-        if(!this.public.isOn) return
+        if(!this.state.isOn) return
 
         const getPlayerCount = "/scoreboard players get #ItHandler it_online"
         const getClock = "/scoreboard players get #Clock it_30mClock"
