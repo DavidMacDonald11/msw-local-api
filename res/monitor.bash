@@ -1,19 +1,19 @@
 #!/bin/bash
 
-if [[ -z "$1" ]]
+if [[ -z "$1" || -z "$2" ]]
 then
-    echo "Requires time to stay on arg"
+    echo "Requires totalMinutes and delaySeconds args"
     exit 1
 fi
 
-delay=30 # seconds
-max=$(((60 / "$delay") * "$1")) # iterations
+delay="$1"
+max=$(((60 / "$delay") * "$2"))
 
 while true
 do
-    node app.js checkAll
+    node app.js getServers >/dev/null
     sleep "$delay"
-    clock=$(($(node app.js incClock) + 0))
+    clock=$(($(node app.js incClockRaw) + 0))
 
     if [[ "$clock" -ge "$max" ]]
     then

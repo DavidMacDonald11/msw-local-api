@@ -24,11 +24,12 @@ switch(func) {
         Server.mustBeOff()
         break
     case "help":
-        out([
+        console.log([
             "Run node app.js 'func', where 'func' is one of:",
-            "\tclear, help, pause, resume, ping, incClock, getFullState, shutdown",
-            "\tgetServers, startServer, rconServer"
-        ].join(""))
+            "\tclear, help, pause, resume, ping, incClockRaw, getFullState, shutdown",
+            "\tgetServers, startServer, rconServer.",
+            "WARNING: 'Raw' commands do no NOT output JSON."
+        ].join("\n"))
         break
     default:
         out(null, `Unknown function ${func}`)

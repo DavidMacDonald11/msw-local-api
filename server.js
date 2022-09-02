@@ -89,7 +89,7 @@ class Server {
         if(this.local.pid === undefined) return
 
         const result = exec([
-            `kill -s 0 ${this.local.pid}`,
+            `ps -p ${this.local.pid}`,
             "echo $?"
         ]).result
 

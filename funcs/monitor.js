@@ -17,21 +17,18 @@ export default () => {
             state.paused = false
             return true
         case "ping":
-            if(state.monitor == null) {
-                const monitor = `nohup ./res/monitor.bash ${state.totalMinutes}  &>/dev/null`
-                state.clock = 0
-                state.monitor = exec(`(${monitor}) & echo $!`).result
-            }
-
-            out("OK")
+            State.verifyMonitor()
+            out({monitorPID: state.monitor})
             return true
-        case "incClock":
+        case "incClockRaw":
             if(!state.stop && !Server.anyOn()) ++state.clock
             else state.clock = 0
 
-            out(state.clock)
+            console.log(state.clock)
             return true
         case "getFullState":
+            State.verifyMonitor()
+
             out({
                 servers: Server.getServers(),
                 state: State.state
