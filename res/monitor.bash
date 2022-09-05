@@ -6,8 +6,8 @@ then
     exit 1
 fi
 
-delay="$1"
-max=$(((60 / "$delay") * "$2"))
+delay="$2"
+max=$(((60 / "$delay") * "$1"))
 
 while true
 do

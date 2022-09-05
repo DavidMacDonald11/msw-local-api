@@ -21,7 +21,7 @@ export default () => {
             out({monitorPID: state.monitor})
             return true
         case "incClockRaw":
-            if(!state.stop && !Server.anyOn()) ++state.clock
+            if(!state.paused && !Server.anyOn()) ++state.clock
             else state.clock = 0
 
             console.log(state.clock)

@@ -42,13 +42,13 @@ class Server {
         let found = null
 
         this.servers.forEach(server => {
-            if(server.info.id === id) {
+            if(server.public.id === id) {
                 found = server
                 return
             }
         })
 
-        if(found) return found
+        if(found !== null) return found
 
         out(null, `Unknown server ID ${id}`)
         process.exit(3)
@@ -79,6 +79,7 @@ class Server {
     start() {
         if(this.state.isOn) return
         this.state.isOn = true
+        this.state.loading = true
 
         this.local.pid = exec([
             `cd "${this.local.path}"`,
@@ -90,7 +91,7 @@ class Server {
         if(this.local.pid === undefined) return
 
         const result = exec([
-            `ps -p ${this.local.pid}`,
+            `ps -p ${this.local.pid} >/dev/null`,
             "echo $?"
         ]).result
 
@@ -107,7 +108,13 @@ class Server {
 
         const getPlayerCount = "/scoreboard players get #ItHandler it_online"
         const getClock = "/scoreboard players get #Clock it_30mClock"
-        const results = exec(`${this.rconCommand} "${getPlayerCount}" "${getClock}"`).result.split("\n")
+
+        const result = exec(`${this.rconCommand} "${getPlayerCount}" "${getClock}"`).result
+
+        if(result == "Error") return
+        this.state.loading = false
+
+        const results = result.split("\n")
 
         let playerCount = +results[1].replace("< #ItHandler has", "").replace("[it_online]", "").trim()
         let clock = +results[3].replace("< #Clock has", "").replace("[it_30mClock]", "").trim()
@@ -115,7 +122,7 @@ class Server {
         const totalMinutes = 30
         let minutesLeft = clock >= 0 ? totalMinutes - (clock / 2) : 0
 
-        this.state = {playerCount, minutesLeft}
+        this.state = {...this.state, playerCount, minutesLeft}
     }
 }
 
