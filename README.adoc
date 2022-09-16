@@ -1,4 +1,4 @@
-= Minecraft Server Local API
+= Minecraft Server Website Local API
 
 :backend-link: https://github.com/DavidMacDonald11/msw-backend
 :frontend-link: https://github.com/DavidMacDonald11/msw-frontend
