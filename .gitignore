@@ -5,6 +5,7 @@ node_modules
 .env
 
 # Ignore res files
+res/*.jar
 res/*.json
 res/servers
 
