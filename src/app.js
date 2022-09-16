@@ -1,9 +1,11 @@
+import Settings from "./settings.js"
 import State from "./state.js"
 import Server from "./server.js"
 import useMonitorFuncs from "./funcs/monitor.js"
 import useServerFuncs from "./funcs/server.js"
 import out from "./out.js"
 
+Settings.read()
 State.read()
 Server.read()
 

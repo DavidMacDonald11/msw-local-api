@@ -1,0 +1,103 @@
+= Minecraft Server Local API
+
+:backend-link: https://github.com/DavidMacDonald11/msw-backend
+:frontend-link: https://github.com/DavidMacDonald11/msw-frontend
+:rcon-link: https://github.com/t9t/minecraft-rcon-client#using-the-command-line-application
+:idle-link: https://github.com/DavidMacDonald11/idle-timeout-datapack
+:port-forwarding-link: https://www.wikihow.com/Set-Up-Port-Forwarding-on-a-Router
+:shutdown-link: https://how-to.fandom.com/wiki/How_to_allow_non-super_users_to_shutdown_computer_in_Linux
+
+_This program is designed for Linux_
+
+== The Minecraft Server Website Toolset
+This is part of a three-part system designed to automate a minecraft server using a website. Also see:
+
+* {backend-link}[The Website Backend]
+* {frontend-link}[The Website Frontend]
+
+This was developed for my own personal use. The system I've designed is very unique to my scenario, so it may not be easy to directly replicate. I also have no intention of implementing features that I will never actaully use. That said, it may still be worth asking for features, as I may find use in them.
+
+Otherwise, feel free to edit this project however you need to for it to suit your needs. If you would like pointers to help you do so, feel free to ask.
+
+== Features
+The purpose of this package is to provide interaction with the host system, as well as the Minecraft servers.
+
+Run `node src/app.js [command]` where `[command]` is one of:
+
+* help - displays help info; _does not output JSON_
+* clear - reset's the host state to default; _does not stop running monitors._
+* pause - pauses the monitor for debugging
+* resume - unpauses the monitor
+* ping - checks if a monitor is running and starts one if necessary
+* incClockRaw - increments the clock if not paused; _does not output JSON_
+* getFullState - prints a JSON object containing all servers and host state
+* shutdown - shuts down the host
+* getServers - prints a JSON object containing all servers
+* startServer `[id]` - starts server with id `[id]`
+* rconServer `[id]` `[mcCommand]` - runs `[mcCommand]` using rcon on server with id `[id]`
+
+== Install Instructions
+. Your host system will need Node.JS and Java installed.
+. Download and place this project onto the host machine.
+. Install the rcon-client
+.. The rcon-client will allow us to send data to and from the Minecraft server. Each server should have rcon enabled, but the rcon port should *NOT* be public-facing. Only the local machine should be able to access rcon for security.
+.. Go to {rcon-link}[this] GitHub page. Under "Using the command-line application", follow the instructions to download the jar. (I have verified v1.0.0 only)
+.. Rename the jar file to `rcon.jar` and place it inside `res/`.
+. Place or install your server(s) into `res/servers`
+.. Each server needs to be of the form `res/servers/[Server Name]/`, with `world`, `server.jar`, `server.properties`, etc. placed in that directory.
+.. Each server needs my {idle-link}[Idle Timeout Datapack] installed, which keeps track of how many players are online, and shuts down the server automatically when no one is online for 30 minutes. (You can customize the time until shutdown)
+.. Each server needs a unique `server-port`, a unqiue `rcon-port`, `function-pemission-level=4`, `enable-rcon=true`. I recommend setting a strong `rcon.password` and setting `broadcast-rcon-to-ops=false`.
+.. Each server needs their `server-port` publically exposed using portforwarding. *This is risky without proper security measures.* If you are only using this for your friends, it is still a risk, but relatively safe so long as you are careful with passing out your IP address. Check out this {port-forwarding-link}[guide] for setting up port forwarding.
+. You may need to modify certain permissions on your system for the `shutdown` command to work properly without a sudo password. Check out this {shutdown-link}[guide].
+. Test the `res/shutdown.bash` file to make sure your host shuts off when it is ran. You can do this by running `node src/app.js shutdown`. You should not need to enter a password.
+. Set up the {backend-link}[website backend].
+
+== Adding Servers to the Program
+Create or edit `res/servers.json`. The format is an array of objects, where each object represents a server. For example:
+[source, json]
+----
+[
+    {
+        "public": { // All public-facing static info
+            "id": 0, // Must be a unique integer for each server
+            "name": "My Server",
+            "description": "Creative-mode city project",
+            "edition": "Java", // Java or Bedrock
+            "version": "1.19.2",
+            "port": 25565 // Must match server-port server.properties
+        },
+        "local": { // All local-only info
+            "rcon": 35565, // Must match rcon-port in server.properties
+            "rconPass": "thisIsNotSecure", // Must match rcon.password in server.properties
+            "path": "./res/servers/My Server/", // Path to server relative to base project
+            "javaArgs": "-Xms2G -Xmx5G" // Java arguments for running the server
+        },
+        "state": { // All public-facing current-state info
+            "isOn": false,
+            "loading": false,
+            "playerCount": 0,
+            "minutesLeft": 0
+        }
+    },
+    {
+        // Second server
+    }
+]
+----
+By filling creating an object in this file for your server, it will be recognized by the system.
+
+== Settings
+Inside of `res/settings.json`, you can change a few options:
+[source, json]
+----
+{
+    "defaultState": {
+        "totalMinutes": 15, // The number of minutes the host will stay on without activity
+        "delaySeconds": 30, // The amount of seconds between clock ticks,
+        "clock": 0, // The current number of clock ticks
+        "monitor": null, // The monitor PID string
+        "paused": false // Whether the monitor is paused or not
+    }
+}
+----
+You likely only would need to change `totalMinutes`, so the system will stay on more or less than 15 minutes without activity.

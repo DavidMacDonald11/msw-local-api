@@ -70,7 +70,7 @@ class Server {
         this.local = server.local
         this.state = server.state
 
-        let rconCommand = "java -jar ./res/minecraft-rcon-client-1.0.0.jar"
+        let rconCommand = "java -jar ./res/rcon.jar"
         let rconArgs = `localhost:${this.local.rcon} ${this.local.rconPass}`
 
         this.rconCommand = `${rconCommand} ${rconArgs}`
@@ -81,9 +81,11 @@ class Server {
         this.state.isOn = true
         this.state.loading = true
 
+        const args = this.local.javaArgs
+
         this.local.pid = exec([
             `cd "${this.local.path}"`,
-            "(nohup java -jar -Xms2G -Xmx5G server.jar > logs/run.log 2>&1) & echo $!"
+            `(nohup java -jar ${args} server.jar > logs/run.log 2>&1) & echo $!`
         ]).result
     }
 

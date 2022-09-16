@@ -3,15 +3,8 @@ import exec from "./exec.js"
 
 class State {
     static file = "./res/state.json"
+    static default = undefined
     static state = undefined
-
-    static default = {
-        totalMinutes: 15,
-        delaySeconds: 30,
-        clock: 0,
-        monitor: null,
-        paused: false
-    }
 
     static read() {
         try {

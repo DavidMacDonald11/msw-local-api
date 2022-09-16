@@ -7,3 +7,5 @@ node_modules
 # Ignore res files
 res/*.json
 res/servers
+
+!res/settings.json

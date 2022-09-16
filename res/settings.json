@@ -1,0 +1,9 @@
+{
+    "defaultState": {
+        "totalMinutes": 15,
+        "delaySeconds": 30,
+        "clock": 0,
+        "monitor": null,
+        "paused": false
+    }
+}

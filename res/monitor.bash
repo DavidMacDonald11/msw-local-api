@@ -11,13 +11,13 @@ max=$(((60 / "$delay") * "$1"))
 
 while true
 do
-    node app.js getServers >/dev/null
+    node src/app.js getServers >/dev/null
     sleep "$delay"
-    clock=$(($(node app.js incClockRaw) + 0))
+    clock=$(($(node src/app.js incClockRaw) + 0))
 
     if [[ "$clock" -ge "$max" ]]
     then
-        node app.js shutdown
+        node src/app.js shutdown
         break
     fi
 done

@@ -1,13 +1,13 @@
 {
-  "name": "msw-local",
+  "name": "msw-local-api",
   "type": "module",
   "version": "1.0.0",
-  "description": "Minecraft Server Website Local",
-  "main": "app.js",
+  "description": "Minecraft Server Website Local API",
+  "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "David MacDonald",
-  "license": "ISC",
+  "license": "MIT",
   "typings": "declarations/rcon.d.ts"
 }
