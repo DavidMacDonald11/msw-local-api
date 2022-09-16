@@ -39,7 +39,7 @@ export default () => {
             Server.mustBeOff()
             Server.write()
             State.write(State.default)
-            exec("../res/shutdown.bash")
+            exec("./res/shutdown.bash")
             process.exit(0)
         default:
             return false
